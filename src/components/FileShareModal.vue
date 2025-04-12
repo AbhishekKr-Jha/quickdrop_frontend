@@ -33,6 +33,7 @@ async share_file_upload_links(){
         applicationFiles:this.files.selectedDocumentFiles , 
         otherFiles:this.files.selectedOtherFiles
     })
+    console.log("the payoload is",this.files.selectedImageFiles.length)
     if(data.success) { 
         this.$emit('close-modal-event')
         this.$toast.success(data.response.message)
