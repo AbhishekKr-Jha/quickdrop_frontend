@@ -1,0 +1,26 @@
+*{box-sizing: border-box;
+  font-family: "Itim", cursive;
+}
+body{overflow-x: hidden;}
+
+@import './base.css';
+@import "tailwindcss";
+@import 'flowbite';
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Itim&display=swap');
+
+.blur-background{
+  -webkit-backdrop-filter: blur(10px); 
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.2); 
+}
+
+input[type="text"]{
+  width: 95%;
+  padding:5px 10px ;
+  border: none;
+  border-bottom:1px solid gray ;
+  outline: none;
+  /* border-radius: 8px; */
+margin: 0 auto;
+/* text-align: center; */
+}
