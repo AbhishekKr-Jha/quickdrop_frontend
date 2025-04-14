@@ -3,10 +3,15 @@ import { toRaw } from 'vue';
 import { post_func } from '@/apiHelper/apiRequests';
 import FileShareModal from '@/components/FileShareModal.vue';
 import DisplayCard from '@/components/DisplayCard.vue';
+import DropdownFilter from '@/components/DropdownFilter.vue';
+import Loader from '@/components/Loader.vue';
 
  
 export default{
     name:'ProfilePage',
+    props:{
+active_menu_id:Number
+    },
     data(){
         return{
 uploadTypes:[
@@ -23,6 +28,10 @@ activeFilterDataTab:0,
 others:[],
 isModalOpen:false,
 isMultiSelectFileOn:false,
+isLoader:{
+    title:'',
+    state:false
+},
 selectedFiles:{
     selectedImageFiles:[],
     selectedVideoFiles:[],
@@ -32,11 +41,13 @@ selectedFiles:{
 // selectedFile:null
 
 
-        }
+        } 
     },
     components:{
         DisplayCard,
-        FileShareModal
+        FileShareModal,
+        DropdownFilter,
+        Loader
     },
     methods:{
        
@@ -84,7 +95,13 @@ else{this.others.push({fileType:"others",...item})}
   } else {
     this.selectedFiles.selectedOtherFiles=this.selectedFiles.selectedOtherFiles.filter(item=>item.key!==file.fileData.key);
   }
+
+
  }
+ let emitValue=this.selectedFiles.selectedImageFiles.length>0 || this.selectedFiles.selectedVideoFiles.length>0 || this.selectedFiles.selectedDocumentFiles.length>0  || this.selectedFiles.selectedOtherFiles.length>0  
+  this.$emit('emit-toggle-share-btn',emitValue)
+
+
 console.log(this.selectedFiles.selectedDocumentFiles.length)
 }
 ,
@@ -109,6 +126,7 @@ document.body.style.overflowY=value?"hidden":"auto"
         },
         handleMultiSelectFileMode(value){
           // console.log(this.selectedFiles)
+          if(!value) this.$emit('emit-toggle-share-btn',value)
 this.isMultiSelectFileOn=value
 this.selectedFiles={
     selectedImageFiles:[],
@@ -129,23 +147,28 @@ this.selectedFiles={
 
 
 <template>
-
-<div  class="w-full  p-5 space-y-16 ">
+    <Loader v-show="isLoader.state" :title="isLoader.title" />
+<div v-show="active_menu_id==1 && !isLoader.state"  class="w-full  md:px-5 pt-16 space-y-10 ">
   
-<div class="w-full   flex gap-5 items-center">
-    <div @click="activeFilterDataTab=item.id" class="w-[100px] py-2 rounded-sm  text-center cursor-pointer" :class="activeFilterDataTab === item.id ? 'bg-red-900' : 'bg-[#62CAEB]'"
-    v-for="item in uploadTypes" :key="item.id">
-        {{ item.title }}
+  <div class="w-full fixed p-5 top-0 left-0 flex items-center justify-start gap-5 bg-[#0F172B]">
+    <div >
+      <DropdownFilter :isMultiSelectActiveValue="isMultiSelectFileOn"  @dropdown-selected="id=>activeFilterDataTab=id" />
     </div>
-    <div @click="handleMultiSelectFileMode(!isMultiSelectFileOn)" class="w-[100px] py-2 rounded-sm bg-[#62CAEB] text-center cursor-pointer" > MultiSelect </div>
-    <div @click="toggle_modal(!isModalOpen)" class="w-[100px] py-2 rounded-sm bg-[#62CAEB] text-center cursor-pointer" > Share </div>
-</div>
+        <button @click="handleMultiSelectFileMode(!isMultiSelectFileOn)"
+        :class="[
+    'inline-flex justify-center items-center w-[150px] rounded-md px-4 py-2 text-white text-sm font-medium cursor-pointer',
+    isMultiSelectFileOn ? 'bg-green-600' : 'bg-blue-700'
+  ]"      >MultiSelect - {{ !isMultiSelectFileOn?'On':'Off' }}
+      </button>
+    </div>
+  
+
 
 <!-- ----Images----- -->
 <div v-show="imageList.length>0 && activeFilterDataTab==0 || activeFilterDataTab==1 " class="w-full space-y-8">
-<div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px]"><p class="text-2xl">Images</p><hr class="w-[35%] h-[2px]"></div>
+<div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px] bg-white"><p class="text-2xl text-white">Images</p><hr class="w-[35%] h-[2px] bg-white"></div>
 <div class="w-full flex justify-center items-start gap-5 flex-wrap">
-<DisplayCard v-for="item in imageList" :key="item" :data="item" @share-btn-clicked="handleSingleFileShare" :multiSelectActive="isMultiSelectFileOn" @file-selection-multi-mode="handleMultiFileSelect" /> 
+<DisplayCard v-for="item in imageList" :key="item" :data="item" @share-btn-clicked="handleSingleFileShare" :multiSelectActive="isMultiSelectFileOn" @file-selection-multi-mode="handleMultiFileSelect"     /> 
 </div>
 </div>
 
@@ -153,7 +176,7 @@ this.selectedFiles={
 
 <!-- ----------documents----- -->
 <div v-show="documentList.length>0 && activeFilterDataTab==0 || activeFilterDataTab==2" class="w-full space-y-8">
-<div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px]"><p class="text-2xl">Documents</p><hr class="w-[35%] h-[2px]"></div>
+<div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px] bg-white" ><p class="text-2xl text-white">Documents</p><hr class="w-[35%] h-[2px] bg-white"></div>
 <div class="w-full flex justify-center items-start gap-5 flex-wrap">
 <DisplayCard v-for="item in documentList" :key="item" :data="item"  @share-btn-clicked="handleSingleFileShare" :multiSelectActive="isMultiSelectFileOn" @file-selection-multi-mode="handleMultiFileSelect"   />
 </div>
@@ -174,8 +197,9 @@ this.selectedFiles={
 
 </div>
 
-<div v-show="isModalOpen" @click="toggle_modal(false)" class=" w-full h-screen flex justify-center items-center fixed top-0 left-0 z-[60] blur-background">
-    <FileShareModal  :files="selectedFiles" @close-modal-event="toggle_modal(!isModalOpen)"  />
+<div  v-show="!isLoader.state && isModalOpen"  class=" w-full h-screen px-3 flex justify-center items-center fixed top-0 left-0 z-[60] blur-background">
+  <span @click="isModalOpen=false" class="absolute top-5 right-5 text-white cursor-pointer text-4xl sm:text-5xl"><i class="fa-solid fa-xmark"></i></span> 
+  <FileShareModal  :files="selectedFiles" @close-modal-event="() => { toggle_modal(!isModalOpen); isMultiSelectFileOn = false }"  @emit-toggle-loader-state="obj=>isLoader=obj" />
 </div>
 
 

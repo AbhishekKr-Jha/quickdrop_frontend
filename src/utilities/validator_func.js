@@ -124,3 +124,35 @@ const isValidEmail = (email,emailMsg) => {
   
     return { success: true };
   };
+
+
+
+  export const file_upload_validator_func=(data)=>{
+    
+    const userEmailValidator = validateUserEmail(data.userEmail);
+    if (!userEmailValidator.success) return userEmailValidator;
+    const fileValidator = validateFiles(data.sharedFile);
+    if (!fileValidator.success) return fileValidator;
+
+    return {success:true}
+  }
+
+
+
+  export const send_uploaded_files_func=(data)=>{
+    const userEmailValidator = validateUserEmail(data.userEmail);
+    if (!userEmailValidator.success) return userEmailValidator;
+  
+    const receiverEmailValidator = validateReceiverEmail(data.receiverEmail);
+    if (!receiverEmailValidator.success) return receiverEmailValidator;
+  
+    const titleValidator = validateTitle(data.title);
+    if (!titleValidator.success) return titleValidator;
+
+
+    const fileValidator = validateFiles(data.sharedFile);
+    if (!fileValidator.success) return fileValidator;
+
+    return {success:true}
+
+  }

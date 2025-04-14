@@ -2,6 +2,7 @@
 
 <script>
 import { post_func, put_func } from '@/apiHelper/apiRequests';
+import { file_upload_validator_func } from '@/utilities/validator_func';
 
  
 export default{
@@ -9,7 +10,7 @@ export default{
     data(){
         return{
             accessCode:'',
-            isAccessCodePassed:true,
+            isAccessCodePassed:false,
             fileUploadingDetails:{
     userEmail:'abhishekhp935@gmail.com',
     fileName:'',
@@ -32,6 +33,16 @@ return this.$toast.error("Invalid Access Code!")
 },
 
 async request_uploading_url(){
+
+    let validationStatus =  file_upload_validator_func({userEmail:this.fileUploadingDetails.userEmail,sharedFile:this.fileUploadingDetails.sharedFile})
+    console.log(">>>>>",validationStatus)
+    if(!validationStatus.success) return this.$toast.error(validationStatus.message) 
+
+    if(!this.fileUploadingDetails.fileName) return this.$toast.error("File name is required!")
+
+    this.$emit('emit-toggle-loader-state',{state:true,title:"Uploading File"})
+
+
     const result=await post_func('/upload_url','application/JSON',{
         userEmail:this.fileUploadingDetails.userEmail ,
         contentType :this.fileUploadingDetails.contentType ,
@@ -40,18 +51,37 @@ async request_uploading_url(){
     })
 
     if(result.success) {
-        this.$toast.success(result.response.message)
+        // this.$toast.success(result.response.message)
         this.upload_file(result.response.presigned_url)
         return
     } 
-return this.$toast.error(result.message)
+
+this.$toast.error(result.message)
+this.$emit('emit-toggle-loader-state', {
+  state: true,
+  title: "Uploading File"
+})
+return
 },
 async upload_file(presignedUrl){
 const formData=new FormData()
 formData.append('file',this.fileUploadingDetails.sharedFile)
 const result=await put_func(presignedUrl,this.fileUploadingDetails.contentType,this.fileUploadingDetails.sharedFile)
-if(result.success) return this.$toast.success("File Uploaded successflly")
-return this.$toast.error("File Not Uploaded")
+this.$emit('emit-toggle-loader-state', {
+  state: false,
+  title: ""
+})
+if(result.success) {
+     this.$toast.success("File Uploaded successflly")
+this.fileUploadingDetails.fileName='',
+this.fileUploadingDetails.sharedFile=''
+this.fileUploadingDetails.fileType=''
+this.fileUploadingDetails.contentType=''
+this.fileUploadingDetails.fileExtension=''
+this.$refs.fileInput.value = null
+return
+}
+return this.$toast.error("File Uploading Error!")
 },
 handleFileChange(e){
         console.log(e.target.files)
@@ -59,6 +89,7 @@ handleFileChange(e){
         this.fileUploadingDetails.sharedFile=e.target.files[0]
         this.fileUploadingDetails.fileType=file_info[0]
         this.fileUploadingDetails.fileExtension=file_info[1]
+        this.fileUploadingDetails.contentType=e.target.files[0].type
 console.log(e)
     }
 }
@@ -71,26 +102,26 @@ console.log(e)
 
 <template>
 
-<div style="padding: 20px ;padding-bottom: 40px;" class="w-full max-w-[420px] p-4  flex flex-col items-center justify-center gap-4  rounded-xl blur-background">
+<div  class="w-full max-w-[420px] py-4  flex flex-col items-center justify-center gap-4  rounded-xl blur-background">
 
     <!-- authenticatioin code -->  
-<div v-show="!isAccessCodePassed" class="w-full  justify-center items-center ">
+<div v-show="!isAccessCodePassed" class="w-full   flex flex-col items-center justify-center gap-4  ">
     <input type="text" v-model="accessCode" name="accessCode" placeholder=" Access Code" required />
-    <button @click="verify_access_code" type="button"  class=" mt-6 text-xl  mx-auto rounded-lg bg-[#62CAEB] text-white" >Continue</button>
+    <button @click="verify_access_code" type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
 </div>
 
 
 <!-- -----email validation--- -->
-<div v-show="isAccessCodePassed" class="w-[98%] max-w-[400px] p-5  flex flex-col items-center justify-center gap-4 " >
-<input type="text"  v-model="fileUploadingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
+<div v-show="isAccessCodePassed" class="w-full flex flex-col items-center justify-center gap-4 " >
+<input type="text" class=":focus"  v-model="fileUploadingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
 
 <input type="text"  v-model="fileUploadingDetails.fileName"   name="filename" placeholder="File Name" required />
 
-<div style="margin: 8px 0;" class= " w-[90%] oveflow-hidden" > 
-<input @change="handleFileChange" type="file" placeholder="File Upload" />
+<div style="margin: 8px 0;" class= " w-[90%] overflow-hidden" > 
+<input ref="fileInput" @change="handleFileChange" type="file" placeholder="File Upload" />
 </div>
 
-<button  @click="request_uploading_url"   type="button"  class=" mt-6 text-xl  mx-auto rounded-lg bg-[#62CAEB] text-white cursor-pointer" >Continue</button>
+<button  @click="request_uploading_url"   type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
 
 </div>
 
