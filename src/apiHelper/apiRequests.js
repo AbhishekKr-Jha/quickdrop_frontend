@@ -34,11 +34,8 @@ export const post_func = async (route,content_type, payload) => {
         response: response.data
       };
     } catch (error) {
-      console.log("Error occurred:", error.message);
-      return {
-        success: false,
-        message: error.message
-      };
+      console.log("Error occurred:", error.response.data);
+      return error.response.data
     }
   };
 
