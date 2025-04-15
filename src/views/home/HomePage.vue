@@ -23,9 +23,9 @@ isLoader:{
         Loader
     },
     mounted(){
-        console.log("the id value is", typeof this.active_menu_id,
-        this.active_menu_id
-        )
+        // console.log("the id value is", typeof this.active_menu_id,
+        // this.active_menu_id
+        // )
     }
 }
 </script>

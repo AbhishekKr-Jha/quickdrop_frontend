@@ -60,3 +60,30 @@ export const put_func = async (route,content_type, payload) => {
     };
   }
 };
+
+
+
+
+
+
+export const delete_func = async (route, payload) => {
+  try {
+    const response = await axios.delete(`${BACKENED_URL}${route}`, {
+      data: payload, // Axios requires 'data' to send body in DELETE
+      headers: {
+        'Content-Type': 'application/json' // or adjust as needed
+      },
+    });
+
+    return {
+      success: response.status === 200,
+      response: response.data
+    };
+  } catch (error) {
+    console.log("Error occurred:", error.message);
+    return {
+      success: false,
+      message:"Something went wrong!"
+    };
+  }
+};

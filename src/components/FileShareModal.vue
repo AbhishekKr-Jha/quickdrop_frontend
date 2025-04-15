@@ -59,7 +59,7 @@ this.$toast.error("something went wrong during multi share")
 },
 },
 mounted(){
-    console.log("the selectec image is",)
+    // console.log("the selectec image is",)
 }
 }
 
@@ -90,7 +90,7 @@ mounted(){
 
 </div>
 
-<button @click="share_file_upload_links"  type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#62CAEB] text-white cursor-pointer" >Continue</button>
+<button @click="share_file_upload_links"  type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
 
 </div>
     </div>

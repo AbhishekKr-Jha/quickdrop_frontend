@@ -45,8 +45,9 @@ this.$emit('dropdown-selected',this.selectedOption.id)
   <div class="relative inline-block text-left dropdown z-[10] ">
     <div>
       <button
+      
         @click="toggleDropdown"
-        class="inline-flex justify-center items-center w-full rounded-md px-4 py-2 text-white bg-[#1D4ED8] text-sm font-medium cursor-pointer " :class="isMultiSelectActiveValue?'bg-[#1D4ED8]': 'bg-red-900'"
+        class="inline-flex justify-center items-center w-full rounded-md px-4 py-2 text-white bg-[#1D4ED8] text-sm font-medium cursor-pointer " 
       >
         {{ selectedOption.title }} &nbsp; <i class="fa-solid fa-angle-down text-base"></i>
       </button>
@@ -57,7 +58,7 @@ this.$emit('dropdown-selected',this.selectedOption.id)
         v-if="open"
         class="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <div style="z-index: 150;" class="py-1">
+        <div style="" class="py-1">
           <div @click="handleDropdownSelection(item)" v-for="(item,index) in dropdown_list" :key="index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
            {{ item.title }}
           </div>

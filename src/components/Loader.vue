@@ -6,10 +6,10 @@ export default{
     title:String
   },
   mounted(){
-    console.log("loader stared")
+    // console.log("loader stared")
   },
   updated(){
-    console.log("loader changed")
+    // console.log("loader changed")
   }
 }
 
