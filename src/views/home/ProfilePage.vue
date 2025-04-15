@@ -91,6 +91,7 @@ this.isLoader={
 }
         if(result.success){
            this.$toast.success('Otp Verified')
+           localStorage.setItem('authorize-email',this.userEmail)
            this.get_all_uploads()
            return
         }
@@ -104,7 +105,7 @@ this.isLoader={
 }
           console.log("the calcilate value is",this.calculate)
           this.calculate=+1 
-            const data=await post_func('/get_upload_list','application/JSON',{userEmail:this.userEmail,token:localStorage.getItem('token') || null})
+            const data=await post_func('/get_upload_list','application/JSON',{userEmail:localStorage.getItem('authorize-email') || this.userEmail,token:localStorage.getItem('token') || null})
             this.isLoader={
   state:false,title:""
 }
