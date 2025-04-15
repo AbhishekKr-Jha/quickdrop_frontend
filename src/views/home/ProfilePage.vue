@@ -30,6 +30,9 @@ calculate:0,
 isModalOpen:false,
 isMultiSelectFileOn:false,
 isValidUser:false,
+userEmail:"",
+otp:"",
+isOtpInputVisible:false,
 isLoader:{
     title:'',
     state:false
@@ -52,12 +55,61 @@ selectedFiles:{
         Loader
     },
     methods:{
+
+      async sendProfileAuthorizationOtp  (){
+
+
+  this.isLoader={
+  state:true,title:"Sending Otp"
+}
+        const result =await post_func('/request_otp','application/json',{userEmail:this.userEmail})
+this.isLoader={
+  state:false,title:" "
+}
+
+
+        if(result.success){
+            this.isOtpInputVisible=true
+            localStorage.setItem('token',result.response.token)
+           this.$toast.success('Otp Sent')
+           return
+        }
+        this.$toast.error("Invalid User!")   
+
+    },
+
+    async verifyProfileAuthorizationOtp(){
+
+      this.isLoader={
+  state:true,title:"Sending Otp"
+}
+        const result =await post_func('/verify_profile_otp','application/json',{
+          otp:this.otp,token:localStorage.getItem('token') || null
+        })
+this.isLoader={
+  state:false,title:" "
+}
+        if(result.success){
+           this.$toast.success('Otp Verified')
+           this.get_all_uploads()
+           return
+        }
+        this.$toast.error("Invalid Otp")   
+
+    },
        
         async get_all_uploads(){
+          this.isLoader={
+  state:true,title:"Loading data..."
+}
           console.log("the calcilate value is",this.calculate)
           this.calculate=+1 
-            const data=await post_func('/get_upload_list','application/JSON',{userEmail:"abhishekhp935@gmail.com"})
+            const data=await post_func('/get_upload_list','application/JSON',{userEmail:this.userEmail,token:localStorage.getItem('token') || null})
+            this.isLoader={
+  state:false,title:""
+}
             if(data.success){
+
                 this.fileList=data.response.url_list
                 this.imageList=[]
                 this.videoList=[]
@@ -71,10 +123,11 @@ else if(fileType=="application"){this.documentList.push({fileType,...item})}
 else{this.others.push({fileType:"others",...item})}
                 })
                 // console.log("imagelist length is",this.imageList)
+                this.isValidUser=true
                 this.$toast.success(data.response.message)
                 return
             }
-            this.$toast.error('Sonething went wrong')  
+            // this.$toast.error('Invalid Credentials!')  
         },
   
         handleMultiFileSelect(file) {
@@ -165,8 +218,17 @@ this.selectedFiles={
 <div v-show="active_menu_id==1 && !isLoader.state"  class="w-full  md:px-5 pt-16 space-y-10 ">
 
 
+  <div v-if="!isValidUser"  class=" w-full max-w-[400px] mx-auto h-[50vh] flex flex-col items-center justify-center gap-4  ">
+<input v-show="!isOtpInputVisible" type="text" v-model="userEmail" name="userEmail" placeholder="User Email" class="text-white" required />
+<input v-show="isOtpInputVisible" type="text" v-model="otp" name="otp" placeholder="6 digit OTP" required />
+
+<button  v-show="!isOtpInputVisible" @click="sendProfileAuthorizationOtp"   type="button"  class=" mt-8 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
+<button  v-show="isOtpInputVisible" @click="verifyProfileAuthorizationOtp"   type="button"  class=" mt-8 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
+
+</div>
+
   
-  <div class="w-full fixed z-[150] p-5 top-0 left-0 flex items-center justify-start gap-5 bg-[#0F172B]">
+  <div v-show="isValidUser" class="w-full fixed z-[150] p-5 top-0 left-0 flex items-center justify-start gap-5 bg-[#0F172B]">
     <div :class="{ 'pointer-events-none': isMultiSelectFileOn }">
       <DropdownFilter :isMultiSelectActiveValue="isMultiSelectFileOn"  @dropdown-selected="id=>activeFilterDataTab=id" />
     </div>
@@ -181,7 +243,7 @@ this.selectedFiles={
 
 
 <!-- ----Images----- -->
-<div v-show="imageList.length>0 && activeFilterDataTab==0 || activeFilterDataTab==1 " class="w-full space-y-8">
+<div v-show=" imageList.length>0 && activeFilterDataTab==0 || activeFilterDataTab==1 " class="w-full space-y-8">
 <div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px] bg-white"><p class="text-2xl text-white">Images</p><hr class="w-[35%] h-[2px] bg-white"></div>
 <div class=" w-full flex justify-center items-start gap-5 flex-wrap ">
 <DisplayCard v-for="item in imageList" :key="item" :data="item" @share-btn-clicked="handleSingleFileShare" :multiSelectActive="isMultiSelectFileOn" @file-selection-multi-mode="handleMultiFileSelect"  @emit-handle-delete="handleFileDeletionProcess"   /> 
@@ -191,7 +253,7 @@ this.selectedFiles={
 
 
 <!-- ----------documents----- -->
- <div v-show="documentList.length>0 && activeFilterDataTab==0 || activeFilterDataTab==2" class="w-full space-y-8">
+ <div v-show=" documentList.length>0 && activeFilterDataTab==0 || activeFilterDataTab==2" class="w-full space-y-8">
 <div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px] bg-white" ><p class="text-2xl text-white">Documents</p><hr class="w-[35%] h-[2px] bg-white"></div>
 <div class="w-full flex justify-center items-start gap-5 flex-wrap">
 <DisplayCard v-for="item in documentList" :key="item" :data="item"  @share-btn-clicked="handleSingleFileShare" :multiSelectActive="isMultiSelectFileOn" @file-selection-multi-mode="handleMultiFileSelect"   />
@@ -200,7 +262,7 @@ this.selectedFiles={
 
 
 <!-- ----------videos----- -->
-<div v-show="videoList.length> 0 && activeFilterDataTab==0 || activeFilterDataTab==3" class="w-full space-y-8">
+<div v-show=" videoList.length> 0 && activeFilterDataTab==0 || activeFilterDataTab==3" class="w-full space-y-8">
 <div v-show="activeFilterDataTab==0" class="w-full flex justify-center items-center gap-8"><hr class="w-[35%] h-[2px]"><p class="text-2xl">Videos</p><hr class="w-[35%] h-[2px]"></div>
 <div class="w-full flex justify-center items-start gap-5 flex-wrap">
 <!-- <UploadCard v-for="item in videoList" :key="item" :data="item" /> -->
@@ -213,9 +275,9 @@ this.selectedFiles={
 
 </div>
 
-<div  v-show="!isLoader.state && isModalOpen"  class=" w-full h-screen px-3 flex justify-center items-center fixed top-0 left-0 z-[360] blur-background">
+<div  v-show="isValidUser && !isLoader.state && isModalOpen"  class=" w-full h-screen px-3 flex justify-center items-center fixed top-0 left-0 z-[360] blur-background">
   <span @click="toggle_modal(false)" class="absolute top-5 right-5 text-white cursor-pointer text-4xl sm:text-5xl"><i class="fa-solid fa-xmark"></i></span> 
-  <FileShareModal  :files="selectedFiles" @close-modal-event="() => { toggle_modal(false); isMultiSelectFileOn = false }"  @emit-toggle-loader-state="obj=>isLoader=obj" />
+  <FileShareModal :email="userEmail"  :files="selectedFiles" @close-modal-event="() => { toggle_modal(false); isMultiSelectFileOn = false }"  @emit-toggle-loader-state="obj=>isLoader=obj" />
 </div>
 
 

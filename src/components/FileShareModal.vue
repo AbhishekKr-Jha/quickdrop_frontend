@@ -7,16 +7,17 @@ import { send_uploaded_files_func } from '../utilities/validator_func';
 export default{
     name:'FileShareModal',
 props:{
-    files:Array
+    files:Array,
+    email:String,
 
 },
 data(){
     return{
 fileSharingDetails:{
-    userEmail:"abhishekhp935@gmail.com",
+    userEmail:this.email,
     receiverEmail: 'cofoyok209@anlocc.com', 
-    title: 'pahse 4 tesing',
-    message:'optinal msg 4',
+    title: 'pahse 4 gen 009 tesing',
+    message:'optinal msg 4 genm 6',
     // sharedFile:''
 }
     }
@@ -59,7 +60,7 @@ this.$toast.error("something went wrong during multi share")
 },
 },
 mounted(){
-    // console.log("the selectec image is",)
+    // console.log("the selectec image is",this.files[0])
 }
 }
 
@@ -80,14 +81,18 @@ mounted(){
 
 <input type="text"  v-model="fileSharingDetails.message"  name="message" placeholder="Enter your message (Optional)" required />
 
-<div class="w-full flex gap-4 justify-center items-center">
-    <div  class="w-[130px] h-[100px] rounded-lg overflow-hidden   relative">
+<div class="w-full flex flex-wrap gap-4 justify-center items-center">
+    <!-- <div  class="w-[130px] h-[100px] rounded-lg overflow-hidden   relative">
 <img :src="files.selectedImageFiles[0]?.view_url" width="100%" height="100%" class="object-contain" >
 <div class="w-full px-2 py-[2px] absolute bottom-0 right-0 bg-red-900 text-xs">
         <p class="truncate">{{ files.selectedImageFiles[0]?.key?.split('/')[3] }}</p>
     </div>
-</div>
+</div> -->
 
+<!-- <div class="px-2 w-[120x] py-1 border-[1px] border-black truncate" v-for="item in files" :key="item.key">
+    {{item.key.split('/')[3]}}
+</div> -->
+<!-- Sending {{ files[0].length }} files -->
 </div>
 
 <button @click="share_file_upload_links"  type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
