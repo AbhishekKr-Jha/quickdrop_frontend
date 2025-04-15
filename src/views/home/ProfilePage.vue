@@ -30,7 +30,7 @@ calculate:0,
 isModalOpen:false,
 isMultiSelectFileOn:false,
 isValidUser:false,
-userEmail:"",
+userEmail:null,
 otp:"",
 isOtpInputVisible:false,
 isLoader:{
@@ -105,10 +105,11 @@ this.isLoader={
 }
           console.log("the calcilate value is",this.calculate)
           this.calculate=+1 
-            const data=await post_func('/get_upload_list','application/JSON',{userEmail:localStorage.getItem('authorize-email') || this.userEmail,token:localStorage.getItem('token') || null})
+            const data=await post_func('/get_upload_list','application/JSON',{userEmail:this.userEmail || localStorage.getItem('authorize-email') ,token:localStorage.getItem('token') || null})
             this.isLoader={
   state:false,title:""
 }
+console.log("the response data is",data)
             if(data.success){
 
                 this.fileList=data.response.url_list
@@ -123,12 +124,12 @@ else if(fileType=="video"){this.videoList.push({fileType,...item})}
 else if(fileType=="application"){this.documentList.push({fileType,...item})}
 else{this.others.push({fileType:"others",...item})}
                 })
-                // console.log("imagelist length is",this.imageList)
                 this.isValidUser=true
                 this.$toast.success(data.response.message)
                 return
             }
-            // this.$toast.error('Invalid Credentials!')  
+            this.isOtpInputVisible=false
+            this.$toast.error(data.message || "Something went wrong!")  
         },
   
         handleMultiFileSelect(file) {

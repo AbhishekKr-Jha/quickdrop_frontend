@@ -14,7 +14,7 @@ props:{
 data(){
     return{
 fileSharingDetails:{
-    userEmail:this.email,
+    userEmail:this.email || localStorage.getItem('authorized-email'),
     receiverEmail: 'cofoyok209@anlocc.com', 
     title: 'pahse 4 gen 009 tesing',
     message:'optinal msg 4 genm 6',
