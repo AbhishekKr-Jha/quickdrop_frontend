@@ -227,7 +227,7 @@ this.selectedFiles={
 
 
 <template>
-    <Loader v-show="isLoader.state" :title="isLoader.title" />
+    <Loader v-show=" active_menu_id==1 && isLoader.state" :title="isLoader.title" />
 <div v-show="active_menu_id==1 && !isLoader.state"  class="w-full  md:px-5 pt-16 space-y-10 ">
 
 
