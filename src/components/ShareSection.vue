@@ -107,7 +107,7 @@ console.log(e)
 <div class="w-full max-w-[420px] pt-3 pb-5  flex flex-col items-center justify-center gap-6  rounded-xl blur-background">
     <div class="w-full flex items-center  px-3"   :class="!isOtpInputVisible ? 'justify-center' : 'justify-between'"> 
         <i @click="handleBackBtn" v-show="isOtpInputVisible" class="fa-solid fa-arrow-left text-2xl cursor-pointer"></i>
-        <p class="text-2xl text-center ">Share</p>
+        <p class="text-2xl text-center text-white  ">Share</p>
         <div v-show="isOtpInputVisible"  class=""> </div>
     </div>
 <div v-if="!isOtpInputVisible"  class=" w-full   flex flex-col items-center justify-center gap-4  ">

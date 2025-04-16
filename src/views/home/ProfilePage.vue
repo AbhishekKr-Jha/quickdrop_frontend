@@ -237,6 +237,10 @@ this.selectedFiles={
 
 <button  v-show="!isOtpInputVisible" @click="sendProfileAuthorizationOtp"   type="button"  class=" mt-8 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
 <button  v-show="isOtpInputVisible" @click="verifyProfileAuthorizationOtp"   type="button"  class=" mt-8 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
+ 
+
+<p class="text-sm text-red-600 font-medium text-center w-[95%]">First Upload some Files with your Email else there won't be any data to show it to you!</p>
+
 
 </div>
 

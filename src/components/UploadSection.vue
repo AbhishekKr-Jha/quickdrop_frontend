@@ -121,6 +121,7 @@ console.log(e)
 
 <!-- -----email validation--- -->
 <div v-show="isAccessCodePassed" class="w-full flex flex-col items-center justify-center gap-4 " >
+    <p class="text-2xl text-center text-white ">Upload</p>
 <input type="text" class="text-white   outline-0 focus:outline-none focus:ring-0"  v-model="fileUploadingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
 
 <input type="text" class="text-white   outline-0 focus:outline-none focus:ring-0"  v-model="fileUploadingDetails.fileName"   name="filename" placeholder="File Name" required />
