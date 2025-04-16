@@ -71,7 +71,7 @@ console.log("te value of multi select boolena is ",this.multiSelectActive)
     <div v-show="!multiSelectActive" style="background: linear-gradient(to bottom,transparent, transparent, black);" class="w-full px-2  py-1 flex justify-around  items-start text-white absolute bottom-0 right-0 ">
 <span title="View" class="text-xs sm:text-base cursor-pointer bg-[#0F172B]  w-[28px] sm:w-[35px] h-[28px] sm:h-[35px] rounded-full flex items-center justify-center"><a :href="data.view_url" target="_blank"><i class="fa-solid fa-eye"></i></a></span>
 <span @click="$emit('share-btn-clicked',data)" title="Share" class="text-xs sm:text-base cursor-pointer bg-[#0F172B] w-[28px] sm:w-[35px] h-[28px] sm:h-[35px] rounded-full flex items-center justify-center"> <i class="fa-solid fa-share"></i></span>
-<span  title="Delete" class="text-xs sm:text-base cursor-pointer bg-[#0F172B]  w-[28px] sm:w-[35px] h-[28px] sm:h-[35px] rounded-full flex items-center justify-center"> <i class="fa-solid fa-trash-can"></i> </span>
+<span  @click="$toast.error('Deleting not yet allowed by admin!')" title="Delete" class="text-xs sm:text-base cursor-pointer bg-[#0F172B]  w-[28px] sm:w-[35px] h-[28px] sm:h-[35px] rounded-full flex items-center justify-center"> <i class="fa-solid fa-trash-can"></i> </span>
 </div> 
 <!-- @click="handleFileDelete(data.key)" -->
 </div>

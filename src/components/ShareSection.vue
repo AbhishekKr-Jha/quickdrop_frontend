@@ -82,6 +82,9 @@ console.log(result.response)
         this.$toast.error("Server Error")
     },
     handleFileChange(e){
+        if ( e.target.files[0].type.startsWith("video/")) {
+        return this.$toast.error(" Video file not allowed!")
+    }
         console.log(e.target.files)
         this.fileSharingDetails.sharedFile=e.target.files
 console.log(e)
@@ -110,13 +113,13 @@ console.log(e)
 <div v-if="!isOtpInputVisible"  class=" w-full   flex flex-col items-center justify-center gap-4  ">
 
 
-    <input type="text" v-model="fileSharingDetails.receiverEmail" name="receiverEmail" placeholder="Send to " required />
+    <input class="text-white  outline-0 focus:outline-none focus:ring-0" type="text" v-model="fileSharingDetails.receiverEmail" name="receiverEmail" placeholder="Send to " required />
 
-<input type="text"  v-model="fileSharingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
+<input class="text-white  outline-0 focus:outline-none focus:ring-0" type="text"  v-model="fileSharingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
 
-<input type="text"  v-model="fileSharingDetails.title"   name="title" placeholder="Title" required />
+<input class="text-white  outline-0 focus:outline-none focus:ring-0" type="text"  v-model="fileSharingDetails.title"   name="title" placeholder="Title" required />
 
-<input type="text"  v-model="fileSharingDetails.message"  name="message" placeholder="Enter your message (Optional)" required />
+<input class="text-white  outline-0 focus:outline-none focus:ring-0" type="text"  v-model="fileSharingDetails.message"  name="message" placeholder="Enter your message (Optional)" required />
 
 
  <div style="margin: 8px 0;" class= " w-[90%] overflow-hidden " > 
@@ -135,7 +138,7 @@ console.log(e)
 </div>
 
 <div v-if="isOtpInputVisible"  class=" w-full max-w-[400px]  flex flex-col items-center justify-center gap-4  ">
-    <input type="text" v-model="otp" name="otpt" placeholder="Enter your Otp" />
+    <input class="text-white  outline-0 focus:outline-none focus:ring-0" type="text" v-model="otp" name="otpt" placeholder="Enter your Otp" />
 
     <button @click="verifyOtp" type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Send</button>
 </div>

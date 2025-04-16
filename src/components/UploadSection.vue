@@ -9,7 +9,7 @@ export default{
     name:'UploadSection',
     data(){
         return{
-            accessCode:'',
+            accessCode:'commandcode00010',
             isAccessCodePassed:false,
             fileUploadingDetails:{
     userEmail:'abhishekhp935@gmail.com',
@@ -84,6 +84,9 @@ return
 return this.$toast.error("File Uploading Error!")
 },
 handleFileChange(e){
+    if ( e.target.files[0].type.startsWith("video/")) {
+        return this.$toast.error(" Video file not allowed!")
+    }
         console.log(e.target.files)
         const file_info=e.target.files[0].type.split('/')
         this.fileUploadingDetails.sharedFile=e.target.files[0]
@@ -106,19 +109,24 @@ console.log(e)
 
     <!-- authenticatioin code -->  
 <div v-show="!isAccessCodePassed" class="w-full   flex flex-col items-center justify-center gap-4  ">
-    <input type="text" v-model="accessCode" name="accessCode" placeholder=" Access Code" required />
+    <input class="text-white bg-[#0F172B]  outline-0 focus:outline-none focus:ring-0" type="text" v-model="accessCode" name="accessCode" placeholder=" Access Code" required />
     <button @click="verify_access_code" type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
+<div class="space-y-1">
+    <p class="text-red-600 font-medium text-center w-[90%] text-xs">The access code is there to stop unwanted uploads.</p>
+<p class="text-red-600 font-medium text-center text-sm w-[95%]">Current code is : " commandcode00010 "</p>
+
+</div>
 </div>
 
 
 <!-- -----email validation--- -->
 <div v-show="isAccessCodePassed" class="w-full flex flex-col items-center justify-center gap-4 " >
-<input type="text" class=":focus"  v-model="fileUploadingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
+<input type="text" class="text-white   outline-0 focus:outline-none focus:ring-0"  v-model="fileUploadingDetails.userEmail"  name="senderEmail" placeholder="Your Email " required />
 
-<input type="text"  v-model="fileUploadingDetails.fileName"   name="filename" placeholder="File Name" required />
+<input type="text" class="text-white   outline-0 focus:outline-none focus:ring-0"  v-model="fileUploadingDetails.fileName"   name="filename" placeholder="File Name" required />
 
 <div style="margin: 8px 0;" class= " w-[90%] overflow-hidden" > 
-<input ref="fileInput" @change="handleFileChange" type="file" placeholder="File Upload" />
+<input  ref="fileInput" @change="handleFileChange" type="file" placeholder="File Upload" />
 </div>
 
 <button  @click="request_uploading_url"   type="button"  class=" mt-6 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>

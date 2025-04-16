@@ -16,9 +16,9 @@ export default{
 </script>
 
 <template>
-<div class="m-auto w-full text-center  space-y-2 z-[200] ">
-    <p>{{title}} ...</p>
-<div class="loader bg-red-900 "></div>
+<div class="m-auto w-full text-center  space-y-4 z-[200] ">
+    <p class="text-xl fonty-semibold text-white">{{title}} ...</p>
+<div class="loader bg-red-900 "></div> 
 </div>
 
 </template>

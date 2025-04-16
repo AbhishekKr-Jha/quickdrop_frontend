@@ -8,16 +8,15 @@ export default{
     name:'FileShareModal',
 props:{
     files:Array,
-    email:String,
-
+email:String,
 },
 data(){
     return{
 fileSharingDetails:{
-    userEmail:this.email || localStorage.getItem('authorized-email'),
-    receiverEmail: 'cofoyok209@anlocc.com', 
-    title: 'pahse 4 gen 009 tesing',
-    message:'optinal msg 4 genm 6',
+    userEmail: this.email,
+    receiverEmail: '', 
+    title: 'pahse 4 testing',
+    message:'optinal msg ',
     // sharedFile:''
 }
     }
@@ -25,21 +24,22 @@ fileSharingDetails:{
 methods:{
     
 async share_file_upload_links(){
-
+    const senderEmail=localStorage.getItem('authorize-email')
+console.log("-----now current email vliodation is----", senderEmail)
     let validationStatus =  send_uploaded_files_func({
-        
-        userEmail: this.fileSharingDetails.userEmail,
+ 
+        userEmail: senderEmail,
   receiverEmail: this.fileSharingDetails.receiverEmail,
   title: this.fileSharingDetails.title,
   sharedFile:this.files
     })
-    console.log(">>>>>",validationStatus)
+    // console.log(">>>>>",validationStatus)
     if(!validationStatus.success) return this.$toast.error(validationStatus.message) 
 
 
     this.$emit('emit-toggle-loader-state',{state:true,title:"Sending File"})
     const data=await post_func('/share_file_links','application/JSON',{
-        userEmail:this.fileSharingDetails.userEmail,
+        userEmail:senderEmail,
         receiverEmail:this.fileSharingDetails.receiverEmail,
         title:this.fileSharingDetails.title,
         message:this.fileSharingDetails.message,
@@ -60,7 +60,11 @@ this.$toast.error("something went wrong during multi share")
 },
 },
 mounted(){
-    // console.log("the selectec image is",this.files[0])
+    console.log("the email is ",localStorage.getItem('authorize-email'))
+//     const storedEmail = localStorage.getItem('authorize-email');
+//   if (storedEmail) {
+//     this.fileSharingDetails.userEmail = storedEmail;
+//   }
 }
 }
 
@@ -75,11 +79,11 @@ mounted(){
 
 <div class="w-full   flex flex-col items-center justify-center gap-4">
 
-        <input type="text" v-model="fileSharingDetails.receiverEmail" name="receiverEmail" placeholder="Send to " class="outline-none" required />
+        <input type="text" v-model="fileSharingDetails.receiverEmail" name="receiverEmail" placeholder="Send to " class="text-white  outline-0 focus:outline-none focus:ring-0" required />
 
-<input type="text"  v-model="fileSharingDetails.title"   name="title" placeholder="Title" required />
+<input type="text"  v-model="fileSharingDetails.title"   name="title" placeholder="Title" class="text-white  outline-0 focus:outline-none focus:ring-0" required />
 
-<input type="text"  v-model="fileSharingDetails.message"  name="message" placeholder="Enter your message (Optional)" required />
+<input type="text"  v-model="fileSharingDetails.message"  name="message" placeholder="Enter your message (Optional)" class="text-white  outline-0 focus:outline-none focus:ring-0" required />
 
 <div class="w-full flex flex-wrap gap-4 justify-center items-center">
     <!-- <div  class="w-[130px] h-[100px] rounded-lg overflow-hidden   relative">

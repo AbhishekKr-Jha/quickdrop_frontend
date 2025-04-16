@@ -5,6 +5,7 @@ import FileShareModal from '@/components/FileShareModal.vue';
 import DisplayCard from '@/components/DisplayCard.vue';
 import DropdownFilter from '@/components/DropdownFilter.vue';
 import Loader from '@/components/Loader.vue';
+import { validateOtp, validateUserEmail } from '@/utilities/validator_func';
 
  
 export default{
@@ -30,7 +31,7 @@ calculate:0,
 isModalOpen:false,
 isMultiSelectFileOn:false,
 isValidUser:false,
-userEmail:null,
+userEmail:localStorage.getItem('authorize-email'),
 otp:"",
 isOtpInputVisible:false,
 isLoader:{
@@ -58,6 +59,10 @@ selectedFiles:{
 
       async sendProfileAuthorizationOtp  (){
 
+        let validationStatus =  validateUserEmail(this.userEmail,"")
+    if(!validationStatus.success) return this.$toast.error(validationStatus.message) 
+
+
 
   this.isLoader={
   state:true,title:"Sending Otp"
@@ -66,8 +71,6 @@ selectedFiles:{
 this.isLoader={
   state:false,title:" "
 }
-
-
         if(result.success){
             this.isOtpInputVisible=true
             localStorage.setItem('token',result.response.token)
@@ -80,6 +83,10 @@ this.isLoader={
 
     async verifyProfileAuthorizationOtp(){
 
+
+      let validationStatus =  validateOtp(this.otp)
+    if(!validationStatus.success) return this.$toast.error(validationStatus.message)  
+
       this.isLoader={
   state:true,title:"Sending Otp"
 }
@@ -89,6 +96,7 @@ this.isLoader={
 this.isLoader={
   state:false,title:" "
 }
+console.log("the otp respopnse is",result)
         if(result.success){
            this.$toast.success('Otp Verified')
            localStorage.setItem('authorize-email',this.userEmail)
@@ -128,6 +136,7 @@ else{this.others.push({fileType:"others",...item})}
                 this.$toast.success(data.response.message)
                 return
             }
+            this.otp=''
             this.isOtpInputVisible=false
             this.$toast.error(data.message || "Something went wrong!")  
         },
@@ -203,8 +212,10 @@ this.selectedFiles={
         console.log("the emit is triggered ",loaderObj)
         // this.isLoader=loaderObj
       this.get_all_uploads()
-      }
-      
+      },
+      getUserEmail() {
+    return localStorage.getItem('authorize-email') || '';
+  }
     },
     mounted(){
         this.get_all_uploads()
@@ -221,8 +232,8 @@ this.selectedFiles={
 
 
   <div v-if="!isValidUser"  class=" w-full max-w-[400px] mx-auto h-[50vh] flex flex-col items-center justify-center gap-4  ">
-<input v-show="!isOtpInputVisible" type="text" v-model="userEmail" name="userEmail" placeholder="User Email" class="text-white" required />
-<input v-show="isOtpInputVisible" type="text" v-model="otp" name="otp" placeholder="6 digit OTP" required />
+<input v-show="!isOtpInputVisible" type="text" v-model="userEmail" name="userEmail" placeholder="User Email" class="text-white  outline-0 focus:outline-none focus:ring-0 " required />
+<input v-show="isOtpInputVisible" type="text" v-model="otp" name="otp" placeholder="6 digit OTP" class="text-white   outline-0 focus:outline-none focus:ring-0 " required />
 
 <button  v-show="!isOtpInputVisible" @click="sendProfileAuthorizationOtp"   type="button"  class=" mt-8 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
 <button  v-show="isOtpInputVisible" @click="verifyProfileAuthorizationOtp"   type="button"  class=" mt-8 px-6 py-2 text-lg  mx-auto rounded-lg bg-[#1D4ED8]  text-white cursor-pointer" >Continue</button>
@@ -279,7 +290,7 @@ this.selectedFiles={
 
 <div  v-show="isValidUser && !isLoader.state && isModalOpen"  class=" w-full h-screen px-3 flex justify-center items-center fixed top-0 left-0 z-[360] blur-background">
   <span @click="toggle_modal(false)" class="absolute top-5 right-5 text-white cursor-pointer text-4xl sm:text-5xl"><i class="fa-solid fa-xmark"></i></span> 
-  <FileShareModal :email="userEmail"  :files="selectedFiles" @close-modal-event="() => { toggle_modal(false); isMultiSelectFileOn = false }"  @emit-toggle-loader-state="obj=>isLoader=obj" />
+  <FileShareModal :email="getUserEmail()"  :files="selectedFiles" @close-modal-event="() => { toggle_modal(false); isMultiSelectFileOn = false }"  @emit-toggle-loader-state="obj=>isLoader=obj" />
 </div>
 
 
